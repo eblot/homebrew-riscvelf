@@ -43,7 +43,7 @@ class Riscv64Newlib < Formula
 
   keg_only "conflict with llvm"
 
-  depends_on "arm-none-eabi-llvm" => :build
+  depends_on "riscv-elf-llvm" => :build
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "python" => :build
