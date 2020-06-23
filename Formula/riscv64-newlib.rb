@@ -51,8 +51,8 @@ class Riscv64Newlib < Formula
   def install
     llvm = Formulary.factory "riscv-elf-llvm"
 
-    xtarget = "riscv32-unknown-elf"
-    xmodel = "-mcmodel=medlow"
+    xtarget = "riscv64-unknown-elf"
+    xmodel = "-mcmodel=medany"
 
     xopts = "-g -Os"
     xcfeatures = "-ffunction-sections -fdata-sections -fno-stack-protector -fvisibility=hidden"
