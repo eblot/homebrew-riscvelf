@@ -95,9 +95,9 @@ class Riscv32Newlib < Formula
       xcxx_inc = "-I#{xsysroot}/include"
       xcxx_lib = "-L#{xsysroot}/lib"
       xcflags = "#{xctarget} #{xopts} #{xcfeatures}"
-      xcxxflags = "#{xctarget} #{xopts} #{xcxxfeatures} #{xcxxdefs} #{xcxx_inc}"    
-      ENV["CFLAGS_FOR_TARGET"] = "-target #{xtarget} #{xcflags} -Wno-unused-command-line-argument"    
-  
+      xcxxflags = "#{xctarget} #{xopts} #{xcxxfeatures} #{xcxxdefs} #{xcxx_inc}"
+      ENV["CFLAGS_FOR_TARGET"] = "-target #{xtarget} #{xcflags} -Wno-unused-command-line-argument"
+
       mktemp do
         puts "--- newlib #{xarch} ---"
         system "#{buildpath}/newlib/configure",
@@ -126,8 +126,8 @@ class Riscv32Newlib < Formula
         system "mv #{xsysroot}/#{xtarget}/* #{xsysroot}/"
         system "rm -rf #{xsysroot}/#{xtarget}"
       end
-      # newlib    
-  
+      # newlib
+
       mktemp do
         puts "--- compiler-rt #{xarch} ---"
         system "cmake",
@@ -174,8 +174,8 @@ class Riscv32Newlib < Formula
         system "mv #{xsysroot}/lib/baremetal/* #{xsysroot}/lib"
         system "rmdir #{xsysroot}/lib/baremetal"
       end
-      # compiler-rt    
-  
+      # compiler-rt
+
       #mktemp do
       #  puts "--- libcxx ---"
       #  system "cmake",
@@ -222,8 +222,8 @@ class Riscv32Newlib < Formula
       #  system "ninja"
       #  system "ninja install"
       #end
-      ## libcxx    
-  
+      ## libcxx
+
       #mktemp do
       #  puts "--- libunwind ---"
       #  system "cmake",
@@ -260,8 +260,8 @@ class Riscv32Newlib < Formula
       #  system "ninja"
       #  system "ninja install"
       #end
-      ## libunwind    
-  
+      ## libunwind
+
       #mktemp do
       #  puts "--- libcxxabi ---"
       #  system "cmake",
