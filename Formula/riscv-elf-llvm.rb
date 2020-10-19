@@ -5,8 +5,8 @@ class RiscvElfLlvm < Formula
   homepage "https://llvm.org/"
 
   stable do
-    url "https://github.com/llvm/llvm-project/archive/llvmorg-10.0.1.tar.gz"
-    sha256 "82ce06e7c2b6a688dd0aa8f0aaa20f44850b1e692cf6c59bf7eebdc28440abea"
+    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/llvm-project-11.0.0.tar.xz"
+    sha256 "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b"
   end
 
   head do
