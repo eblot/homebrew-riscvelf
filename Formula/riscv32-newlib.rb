@@ -69,8 +69,10 @@ class Riscv32Newlib < Formula
       xcxx_inc = "-I#{xsysroot}/include"
       xcxx_lib = "-L#{xsysroot}/lib"
       xcflags = "#{xctarget} #{xopts} #{xcfeatures}"
-      xcxxflags = "#{xctarget} #{xopts} #{xcxxfeatures} #{xcxxdefs} #{xcxx_inc}"
-      ENV["CFLAGS_FOR_TARGET"] = "-target #{xtarget} #{xcflags} -Wno-unused-command-line-argument"
+      # remap source file path so that it is possible to step-debug system
+      # library files (see below)
+      xncflags = "#{xcflags} -fdebug-prefix-map=#{buildpath}/newlib=#{opt_prefix}/#{xtarget}"
+      ENV["CFLAGS_FOR_TARGET"] = "-target #{xtarget} #{xncflags} -Wno-unused-command-line-argument"
 
       mktemp do
         puts "--- newlib #{xarch} ---"
@@ -102,6 +104,8 @@ class Riscv32Newlib < Formula
       end
       # newlib
 
+      xccflags = "#{xcflags} -fdebug-prefix-map=#{buildpath}/compiler-rt=#{opt_prefix}/#{xtarget}/compiler-rt"
+
       mktemp do
         puts "--- compiler-rt #{xarch} ---"
         system "cmake",
@@ -123,9 +127,9 @@ class Riscv32Newlib < Formula
                   "-DCMAKE_ASM_COMPILER_TARGET=#{xtarget}",
                   "-DCMAKE_SYSROOT=#{xsysroot}",
                   "-DCMAKE_SYSROOT_LINK=#{xsysroot}",
-                  "-DCMAKE_C_FLAGS=#{xcflags}",
-                  "-DCMAKE_ASM_FLAGS=#{xcflags}",
-                  "-DCMAKE_CXX_FLAGS=#{xcflags}",
+                  "-DCMAKE_C_FLAGS=#{xccflags}",
+                  "-DCMAKE_ASM_FLAGS=#{xccflags}",
+                  "-DCMAKE_CXX_FLAGS=#{xccflags}",
                   "-DCMAKE_EXE_LINKER_FLAGS=-L#{xsysroot}/lib",
                   "-DLLVM_CONFIG_PATH=#{llvm.bin}/llvm-config",
                   "-DLLVM_DEFAULT_TARGET_TRIPLE=#{xtarget}",
@@ -150,8 +154,35 @@ class Riscv32Newlib < Formula
       end
       # compiler-rt
 
+      # extract the list of actually used source files, so they can be copied
+      # into the destination tree (so that it is possible to step-debug in
+      # the system libraries)
+      system "llvm-dwarfdump #{xsysroot}/lib/*.a | grep DW_AT_decl_file | \
+        tr -d ' ' | cut -d'\"' -f2 >> #{buildpath}/srcfiles.tmp"
+
     end
     # for arch
+
+    # find unique source files, would likely be easier in Ruby,
+    # but Ruby is dead - or should be :-)
+    # newlib/ files and compiler-rt are handled one after another, as newlib
+    # as an additional directory level
+    # realpath is required to resolve ../ path specifier, which are otherwise
+    # trash by tar, leading to invalid path (maybe cpio would be better here?)
+    puts "--- library source files ---"
+    system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/(newlib|libgloss)/' | \
+      sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' | \
+      (cd newlib; xargs -n 1 realpath --relative-to .) \
+        > #{buildpath}/newlib.files"
+    system "cat #{buildpath}/newlib.files"
+    system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/compiler-rt/' |
+      sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' \
+        > #{buildpath}/compiler-rt.files"
+    system "rm #{buildpath}/srcfiles.tmp"
+    system "tar cf - -C #{buildpath}/newlib -T #{buildpath}/newlib.files | \
+      tar xf - -C #{prefix}/#{xtarget}"
+    system "tar cf - -C #{buildpath} -T #{buildpath}/compiler-rt.files | \
+      tar xf - -C #{prefix}/#{xtarget}"
   end
   # install
 end
