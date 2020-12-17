@@ -21,6 +21,7 @@ class Riscv32Newlib < Formula
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "python" => :build
+  depends_on "coreutils" => :build if OS.mac?
 
   def install
     llvm = Formulary.factory "riscv-elf-llvm"
@@ -104,7 +105,15 @@ class Riscv32Newlib < Formula
       end
       # newlib
 
-      xccflags = "#{xcflags} -fdebug-prefix-map=#{buildpath}/compiler-rt=#{opt_prefix}/#{xtarget}/compiler-rt"
+      if OS.mac?
+        # no idea why cmake uses /tmp which is a symlink to /private/tmp
+        # even if it is run from /private/tmp. This is hackish, looking for a
+        # better way
+        vbuildpath = buildpath.sub(/^\/private\/tmp\//, "/tmp/")
+      else
+        vbuildpath = buildpath
+      end
+      xccflags = "#{xcflags} -fdebug-prefix-map=#{vbuildpath}/compiler-rt=#{opt_prefix}/#{xtarget}/compiler-rt"
 
       mktemp do
         puts "--- compiler-rt #{xarch} ---"
