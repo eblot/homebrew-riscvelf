@@ -15,6 +15,8 @@ class Riscv32Newlib < Formula
     end
   end
 
+  option "with-debug", "Build libraries in debug mode"
+
   keg_only "conflict with llvm"
 
   depends_on "riscv-elf-llvm" => :build
@@ -48,7 +50,38 @@ class Riscv32Newlib < Formula
     ENV["READELF_FOR_TARGET"] = "#{llvm.bin}/llvm-readelf"
     ENV["AS_FOR_TARGET"] = "#{llvm.bin}/clang"
 
+    newlib_args = %W[
+        --disable-malloc-debugging
+        --disable-newlib-atexit-dynamic-alloc
+        --disable-newlib-fseek-optimization
+        --disable-newlib-fvwrite-in-streamio
+        --disable-newlib-iconv
+        --disable-newlib-mb
+        --disable-newlib-supplied-syscalls
+        --disable-newlib-wide-orient
+        --disable-nls
+        --enable-lite-exit
+        --enable-newlib-multithread
+        --enable-newlib-reent-small
+        --enable-newlib-nano-malloc
+        --enable-newlib-global-atexit
+        --disable-newlib-unbuf-stream-opt
+        # default to larger printf family functions, with C99 support
+        --enable-newlib-io-long-long
+        --enable-newlib-io-c99-formats
+        --disable-newlib-io-long-double
+        --disable-newlib-nano-formatted-io
+    ]
+
+    newlib_nofp = "--disable-newlib-io-float"
+
     host=`cc -dumpmachine`.strip
+
+    if build.with? "debug"
+      xopts = "-g -Og"
+    else
+      xopts="-Os"
+    end
 
     # Note: beware that enable assertions disables CMake's NDEBUG flag, which
     # in turn enable calls to fprintf/fflush and other stdio API, which may
@@ -57,12 +90,17 @@ class Riscv32Newlib < Formula
     ["i", "ia", "iac", "im", "imac", "iaf", "iafd", "imf", "imfd",
      "imafc", "imafdc"].each do |abi|
       if abi.include? "d"
-          fp="d"
+        fp="d"
+        newlib_float=""
       elsif abi.include? "f"
-          fp="f"
+        fp="f"
+        newlib_float=""
       else
-          fp=""
+        fp=""
+        # assume no float support, not even soft-float in printf functions
+        newlib_float=newlib_nofp
       end
+
       xarch = "rv32#{abi}"
       xctarget = "-march=#{xarch} -mabi=ilp32#{fp} #{xmodel}"
       xarchdir = "#{xarch}"
@@ -82,21 +120,9 @@ class Riscv32Newlib < Formula
                   "--build=#{host}",
                   "--target=#{xtarget}",
                   "--prefix=#{xsysroot}",
-                  "--disable-newlib-supplied-syscalls",
-                  "--enable-newlib-reent-small",
-                  "--disable-newlib-fvwrite-in-streamio",
-                  "--disable-newlib-fseek-optimization",
-                  "--disable-newlib-wide-orient",
-                  "--enable-newlib-nano-malloc",
-                  "--disable-newlib-unbuf-stream-opt",
-                  "--enable-lite-exit",
-                  "--enable-newlib-global-atexit",
-                  "--disable-newlib-nano-formatted-io",
-                  "--disable-newlib-fvwrite-in-streamio",
-                  "--enable-newlib-io-c99-formats",
-                  "--enable-newlib-io-float",
-                  "--disable-newlib-io-long-double",
-                  "--disable-nls"
+                  *newlib_args,
+                  "#{newlib_float}"
+
         system "make"
         # deparallelise (-j1) is required or installer fails to create output dir
         system "make -j1 install; true"
@@ -113,7 +139,7 @@ class Riscv32Newlib < Formula
       else
         vbuildpath = buildpath
       end
-      xccflags = "#{xcflags} -fdebug-prefix-map=#{vbuildpath}/compiler-rt=#{opt_prefix}/#{xtarget}/compiler-rt"
+      xcrtflags = "#{xcflags} -fdebug-prefix-map=#{vbuildpath}/compiler-rt=#{opt_prefix}/#{xtarget}/compiler-rt"
 
       mktemp do
         puts "--- compiler-rt #{xarch} ---"
@@ -136,9 +162,9 @@ class Riscv32Newlib < Formula
                   "-DCMAKE_ASM_COMPILER_TARGET=#{xtarget}",
                   "-DCMAKE_SYSROOT=#{xsysroot}",
                   "-DCMAKE_SYSROOT_LINK=#{xsysroot}",
-                  "-DCMAKE_C_FLAGS=#{xccflags}",
-                  "-DCMAKE_ASM_FLAGS=#{xccflags}",
-                  "-DCMAKE_CXX_FLAGS=#{xccflags}",
+                  "-DCMAKE_C_FLAGS=#{xcrtflags}",
+                  "-DCMAKE_ASM_FLAGS=#{xcrtflags}",
+                  "-DCMAKE_CXX_FLAGS=#{xcrtflags}",
                   "-DCMAKE_EXE_LINKER_FLAGS=-L#{xsysroot}/lib",
                   "-DLLVM_CONFIG_PATH=#{llvm.bin}/llvm-config",
                   "-DLLVM_DEFAULT_TARGET_TRIPLE=#{xtarget}",
@@ -163,35 +189,37 @@ class Riscv32Newlib < Formula
       end
       # compiler-rt
 
-      # extract the list of actually used source files, so they can be copied
-      # into the destination tree (so that it is possible to step-debug in
-      # the system libraries)
-      system "llvm-dwarfdump #{xsysroot}/lib/*.a | grep DW_AT_decl_file | \
-        tr -d ' ' | cut -d'\"' -f2 >> #{buildpath}/srcfiles.tmp"
-
+      if build.with? "debug"
+        # extract the list of actually used source files, so they can be copied
+        # into the destination tree (so that it is possible to step-debug in
+        # the system libraries)
+        system "llvm-dwarfdump #{xsysroot}/lib/*.a | grep DW_AT_decl_file | \
+          tr -d ' ' | cut -d'\"' -f2 >> #{buildpath}/srcfiles.tmp"
+      end
     end
     # for arch
 
-    # find unique source files, would likely be easier in Ruby,
-    # but Ruby is dead - or should be :-)
-    # newlib/ files and compiler-rt are handled one after another, as newlib
-    # as an additional directory level
-    # realpath is required to resolve ../ path specifier, which are otherwise
-    # trash by tar, leading to invalid path (maybe cpio would be better here?)
-    puts "--- library source files ---"
-    system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/(newlib|libgloss)/' | \
-      sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' | \
-      (cd newlib; xargs -n 1 realpath --relative-to .) \
-        > #{buildpath}/newlib.files"
-    system "cat #{buildpath}/newlib.files"
-    system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/compiler-rt/' |
-      sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' \
-        > #{buildpath}/compiler-rt.files"
-    system "rm #{buildpath}/srcfiles.tmp"
-    system "tar cf - -C #{buildpath}/newlib -T #{buildpath}/newlib.files | \
-      tar xf - -C #{prefix}/#{xtarget}"
-    system "tar cf - -C #{buildpath} -T #{buildpath}/compiler-rt.files | \
-      tar xf - -C #{prefix}/#{xtarget}"
+    if build.with? "debug"
+      # find unique source files, would likely be easier in Ruby,
+      # but Ruby is dead - or should be :-)
+      # newlib/ files and compiler-rt are handled one after another, as newlib
+      # as an additional directory level
+      # realpath is required to resolve ../ path specifier, which are otherwise
+      # trash by tar, leading to invalid path (maybe cpio would be better here?)
+      puts "--- library source files ---"
+      system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/(newlib|libgloss)/' | \
+        sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' | \
+        (cd newlib; xargs -n 1 realpath --relative-to .) \
+          > #{buildpath}/newlib.files"
+      system "sort -u #{buildpath}/srcfiles.tmp | grep -E '/compiler-rt/' |
+        sed 's%^#{opt_prefix}/#{xtarget}/%%' | grep -v '^/' \
+          > #{buildpath}/compiler-rt.files"
+      system "rm #{buildpath}/srcfiles.tmp"
+      system "tar cf - -C #{buildpath}/newlib -T #{buildpath}/newlib.files | \
+        tar xf - -C #{prefix}/#{xtarget}"
+      system "tar cf - -C #{buildpath} -T #{buildpath}/compiler-rt.files | \
+        tar xf - -C #{prefix}/#{xtarget}"
+    end
   end
   # install
 end
