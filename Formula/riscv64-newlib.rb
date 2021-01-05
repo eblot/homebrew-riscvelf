@@ -10,8 +10,8 @@ class Riscv64Newlib < Formula
     sha256 "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b"
 
     resource "newlib" do
-      url "ftp://sourceware.org/pub/newlib/newlib-3.3.0.tar.gz"
-      sha256 "58dd9e3eaedf519360d92d84205c3deef0b3fc286685d1c562e245914ef72c66"
+      url "ftp://sourceware.org/pub/newlib/newlib-4.1.0.tar.gz"
+      sha256 "f296e372f51324224d387cc116dc37a6bd397198756746f93a2b02e9a5d40154"
     end
   end
 
@@ -31,7 +31,6 @@ class Riscv64Newlib < Formula
     xtarget = "riscv64-unknown-elf"
     xmodel = "-mcmodel=medany"
 
-    xopts = "-g -Os"
     xcfeatures = "-ffunction-sections -fdata-sections -fno-stack-protector -fvisibility=hidden"
     xcxxfeatures = "#{xcfeatures} -fno-use-cxa-atexit"
 
