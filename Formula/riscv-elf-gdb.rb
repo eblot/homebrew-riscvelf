@@ -10,6 +10,7 @@ class RiscvElfGdb < Formula
   depends_on "libmpc"
   depends_on "mpfr"
   depends_on "readline"
+  depends_on "expat"
   depends_on "python@3.8"
 
   # Linux dependencies.
@@ -30,7 +31,8 @@ class RiscvElfGdb < Formula
                 "--with-mpfr=#{Formulary.factory("mpfr").prefix}",
                 "--with-mpc=#{Formulary.factory("libmpc").prefix}",
                 "--with-readline=#{Formulary.factory("readline").prefix}",
-                "--with-python",
+                "--with-python3=#{Formulary.factory("python@3.8").prefix}/bin/python3",
+                "--with-expat=#{Formulary.factory("expat").prefix}",
                 "--without-cloog",
                 "--enable-lto", "--disable-werror"
       system "make"
