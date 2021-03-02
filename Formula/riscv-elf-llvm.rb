@@ -10,7 +10,7 @@ class RiscvElfLlvm < Formula
   end
 
   head do
-    url "https://github.com/llvm/llvm-project", :using => :git
+    url "https://github.com/llvm/llvm-project", :using => :git, :tag => "llvmorg-12.0.0-rc2"
   end
 
   # beware that forcing link may seriously break your installation, as
@@ -29,7 +29,7 @@ class RiscvElfLlvm < Formula
   def install
     args = %w[
       -DCMAKE_BUILD_TYPE=Release
-      -DLLVM_ENABLE_PROJECTS=clang;clang-tools-extra;lld;lldb
+      -DLLVM_ENABLE_PROJECTS=clang;clang-tools-extra;lld
       -DLLVM_ENABLE_SPHINX=False
       -DLLVM_INCLUDE_TESTS=False
       -DLLVM_TARGETS_TO_BUILD=RISCV
