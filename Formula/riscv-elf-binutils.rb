@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfBinutils < Formula
   desc "GNU Binutils for OS-less RISC-V architecture"
   homepage "https://www.gnu.org/software/binutils/"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.35.1.tar.xz"
-  sha256 "3ced91db9bf01182b7e420eab68039f2083aed0a214c0424e257eae3ddee8607"
+  url "https://ftp.gnu.org/gnu/binutils/binutils-2.36.1.tar.xz"
+  sha256 "e81d9edf373f193af428a0f256674aea62a9d74dfe93f65192d4eae030b0f3b0"
 
   depends_on "gmp"
   depends_on "mpfr"
