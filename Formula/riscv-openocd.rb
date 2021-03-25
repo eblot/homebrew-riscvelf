@@ -26,6 +26,7 @@ class RiscvOpenocd < Formula
       --enable-verbose-usb-comms
       --enable-ftdi
       --enable-jlink
+      --enable-remote-bitbang
       --disable-doxygen-html
       --disable-doxygen-pdf
       --disable-werror
@@ -61,7 +62,6 @@ class RiscvOpenocd < Formula
       --disable-buspirate
       --disable-sysfsgpio
       --disable-minidriver-dummy
-      --disable-remote-bitbang
     ]
 
     system "./bootstrap"
