@@ -6,8 +6,10 @@ class Riscv64Newlib < Formula
   # and "https://sourceware.org/newlib/"
 
   stable do
-    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/llvm-project-11.0.0.tar.xz"
-    sha256 "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b"
+    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/llvm-project-12.0.0.src.tar.xz"
+    sha256 "9ed1688943a4402d7c904cc4515798cdb20080066efa010fe7e1f2551b423628"
+
+    patch :DATA
 
     resource "newlib" do
       url "ftp://sourceware.org/pub/newlib/newlib-4.1.0.tar.gz"
@@ -222,3 +224,29 @@ class Riscv64Newlib < Formula
   # install
 end
 # formula
+
+# These patch series address a build issue with baremetal toolchains, where
+# standard C library header files (which are not available) are used.
+__END__
+--- a/compiler-rt/lib/builtins/CMakeLists.txt
++++ b/compiler-rt/lib/builtins/CMakeLists.txt
+@@ -244,7 +244,7 @@ if (HAVE_UNWIND_H)
+   )
+ endif ()
+
+-if (NOT FUCHSIA)
++if (NOT FUCHSIA AND NOT COMPILER_RT_BAREMETAL_BUILD)
+   set(GENERIC_SOURCES
+     ${GENERIC_SOURCES}
+     clear_cache.c
+--- a/compiler-rt/lib/builtins/int_util.c
++++ b/compiler-rt/lib/builtins/int_util.c
+@@ -41,7 +41,7 @@ void __compilerrt_abort_impl(const char *file, int line, const char *function) {
+   __assert_rtn(function, file, line, "libcompiler_rt abort");
+ }
+
+-#elif __Fuchsia__
++#elif __Fuchsia__ || 1
+
+ #ifndef _WIN32
+ __attribute__((weak))

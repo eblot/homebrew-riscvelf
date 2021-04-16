@@ -5,12 +5,12 @@ class RiscvElfLlvm < Formula
   homepage "https://llvm.org/"
 
   stable do
-    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/llvm-project-11.0.0.tar.xz"
-    sha256 "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b"
+    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/llvm-project-12.0.0.src.tar.xz"
+    sha256 "9ed1688943a4402d7c904cc4515798cdb20080066efa010fe7e1f2551b423628"
   end
 
   head do
-    url "https://github.com/llvm/llvm-project", :using => :git, :tag => "llvmorg-12.0.0-rc2"
+    url "https://github.com/llvm/llvm-project", :using => :git, :tag => "llvmorg-12.0.0-rc5"
   end
 
   # beware that forcing link may seriously break your installation, as
