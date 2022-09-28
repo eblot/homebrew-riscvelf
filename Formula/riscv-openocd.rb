@@ -2,17 +2,13 @@ class RiscvOpenocd < Formula
   desc "On-chip debugging, in-system programming for RISC-V"
   homepage "https://sourceforge.net/projects/openocd/"
 
-  # openocd developers' official web site is utterly buggy and unstable
-  url "https://github.com/ntfreak/openocd.git", :tag => "v0.11.0"
-  version "0.11.0-elf64"
-  # sha256 "d55761fbabf0d2695099fb963be29fbc3300f2ef10807653918e6bb1bedc6284"
+  version="0.11.0_52177592f"  # 2022/08/01
+  revision="52177592f9d3afc6a008f8e1b321cf74e823018f"
 
-  patch do
-    # enable ELF64 loading
-    url "https://gist.githubusercontent.com/sifive-eblot/a5299eb1f132a00bf45ad97dff4fe78d/raw/44f9488f6955da020b6022c7dadc7150aef04302/elf64.patch"
-    sha256 "591938057d88a9f178a7e9ef8614d8c8fb9a353f7a52b616dcc90b066315b53e"
+  head do
+    url "https://github.com/riscv/riscv-openocd.git",
+        :revision => "#{revision}"
   end
-
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
@@ -34,7 +30,6 @@ class RiscvOpenocd < Formula
       --enable-verbose-usb-comms
       --enable-ftdi
       --enable-jlink
-      --enable-remote-bitbang
       --disable-doxygen-html
       --disable-doxygen-pdf
       --disable-werror
@@ -70,10 +65,12 @@ class RiscvOpenocd < Formula
       --disable-buspirate
       --disable-sysfsgpio
       --disable-minidriver-dummy
+      --disable-remote-bitbang
     ]
 
     system "./bootstrap"
     system "./configure", *args
+    system "make"
     system "make", "install"
   end
 end

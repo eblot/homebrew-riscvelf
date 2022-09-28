@@ -1,17 +1,10 @@
 require "formula"
 
 class RiscvElfLlvm < Formula
+  homepage "https://llvm.org//"
   desc "Next-gen compiler for baremetal RISC-V targets"
-  homepage "https://llvm.org/"
-
-  stable do
-    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/llvm-project-12.0.0.src.tar.xz"
-    sha256 "9ed1688943a4402d7c904cc4515798cdb20080066efa010fe7e1f2551b423628"
-  end
-
-  head do
-    url "https://github.com/llvm/llvm-project", :using => :git, :tag => "llvmorg-12.0.0-rc5"
-  end
+  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.1/llvm-project-15.0.1.src.tar.xz"
+  sha256 "f25ce2d4243bebf527284eb7be7f6f56ef454fca8b3de9523f7eb4efb8d26218"
 
   # beware that forcing link may seriously break your installation, as
   # some header files may be symlinked in /usr/local/include and /usr/local/lib
@@ -38,6 +31,7 @@ class RiscvElfLlvm < Formula
       -DCMAKE_CROSSCOMPILING=ON
       -DLLDB_USE_SYSTEM_DEBUGSERVER=ON
       -DLLVM_OPTIMIZED_TABLEGEN=ON
+      -DLLVM_ENABLE_Z3_SOLVER=ON
     ]
 
     # Force LLDB_USE_SYSTEM_DEBUGSERVER, otherwise LLDB build fails miserably,
