@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGdb < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU debugger for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.39.tar.xz"
-  sha256 "645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00"
+  url "https://ftp.gnu.org/gnu/gdb/gdb-12.1.tar.xz"
+  sha256 "0e1793bf8f2b54d53f46dea84ccfd446f48f81b297b28c4f7fc017b818d69fed"
 
   depends_on "gmp"
   depends_on "libmpc"
@@ -21,12 +21,6 @@ class RiscvElfGdb < Formula
 
   # Linux dependencies.
   depends_on "guile" unless OS.mac?
-
-  # need to regenerate configure script after applying patch
-  if OS.mac?
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-  end
 
   def install
     mkdir "build" do
