@@ -1,12 +1,12 @@
 class RiscvOpenocd < Formula
   desc "On-chip debugging, in-system programming for RISC-V"
   homepage "https://sourceforge.net/projects/openocd/"
-  # url "https://github.com/openocd-org/openocd/archive/refs/tags/v0.12.0-rc1.tar.gz"
-  # sha256 "dcf00672cbc72c17ab78596aa486a953766f05146b0ca4a1cfe8ae894bf75cc6"
-  # version="0.12.0-rc1"
+  url "https://github.com/openocd-org/openocd/archive/refs/tags/v0.12.0-rc3.tar.gz"
+  sha256 "dcf00672cbc72c17ab78596aa486a953766f05146b0ca4a1cfe8ae894bf75cc6"
+  version="0.12.0-rc3"
 
   head do
-    url "https://github.com/openocd-org/openocd.git", :tag => "v0.12.0-rc1"
+    url "https://github.com/openocd-org/openocd.git", :tag => "v0.12.0-rc3"
     patch :DATA
   end
 
@@ -88,3 +88,56 @@ index eed747b58..83075c281 100644
  	FLASH_ID("issi is25lp064",      0x03, 0x00, 0x02, 0xd8, 0xc7, 0x0017609d, 0x100, 0x10000, 0x800000),
  	FLASH_ID("issi is25lp128d",     0x03, 0xeb, 0x02, 0xd8, 0xc7, 0x0018609d, 0x100, 0x10000, 0x1000000),
  	FLASH_ID("issi is25wp128d",     0x03, 0xeb, 0x02, 0xd8, 0xc7, 0x0018709d, 0x100, 0x10000, 0x1000000),
+diff --git a/src/target/riscv/riscv-013.c b/src/target/riscv/riscv-013.c
+index 99d3873de..63a5a3f54 100644
+--- a/src/target/riscv/riscv-013.c
++++ b/src/target/riscv/riscv-013.c
+@@ -393,7 +393,7 @@ static void dump_field(int idle, const struct scan_field *field)
+ 	unsigned int in_data = get_field(in, DTM_DMI_DATA);
+ 	unsigned int in_address = in >> DTM_DMI_ADDRESS_OFFSET;
+ 
+-	log_printf_lf(LOG_LVL_DEBUG,
++	log_printf_lf(LOG_LVL_DEBUG_IO,
+ 			__FILE__, __LINE__, "scan",
+ 			"%db %s %08x @%02x -> %s %08x @%02x; %di",
+ 			field->num_bits, op_string[out_op], out_data, out_address,
+@@ -404,7 +404,7 @@ static void dump_field(int idle, const struct scan_field *field)
+ 	decode_dmi(out_text, out_address, out_data);
+ 	decode_dmi(in_text, in_address, in_data);
+ 	if (in_text[0] || out_text[0]) {
+-		log_printf_lf(LOG_LVL_DEBUG, __FILE__, __LINE__, "scan", "%s -> %s",
++		log_printf_lf(LOG_LVL_DEBUG_IO, __FILE__, __LINE__, "scan", "%s -> %s",
+ 				out_text, in_text);
+ 	}
+ }
+diff --git a/src/target/riscv/riscv.c b/src/target/riscv/riscv.c
+index 4f24fb41e..585d8dfa6 100644
+--- a/src/target/riscv/riscv.c
++++ b/src/target/riscv/riscv.c
+@@ -2088,7 +2088,7 @@ static enum riscv_poll_hart riscv_poll_hart(struct target *target, int hartid)
+ 	if (riscv_set_current_hartid(target, hartid) != ERROR_OK)
+ 		return RPH_ERROR;
+ 
+-	LOG_DEBUG("polling hart %d, target->state=%d", hartid, target->state);
++	LOG_DEBUG_IO("polling hart %d, target->state=%d", hartid, target->state);
+ 
+ 	/* If OpenOCD thinks we're running but this hart is halted then it's time
+ 	 * to raise an event. */
+@@ -2183,7 +2183,7 @@ exit:
+ /*** OpenOCD Interface ***/
+ int riscv_openocd_poll(struct target *target)
+ {
+-	LOG_DEBUG("polling all harts");
++	LOG_DEBUG_IO("polling all harts");
+ 	int halted_hart = -1;
+ 
+ 	if (target->smp) {
+@@ -3301,7 +3301,7 @@ int riscv_set_current_hartid(struct target *target, int hartid)
+ 
+ 	int previous_hartid = riscv_current_hartid(target);
+ 	r->current_hartid = hartid;
+-	LOG_DEBUG("setting hartid to %d, was %d", hartid, previous_hartid);
++	LOG_DEBUG_IO("setting hartid to %d, was %d", hartid, previous_hartid);
+ 	if (r->select_current_hart(target) != ERROR_OK)
+ 		return ERROR_FAIL;
+ 
