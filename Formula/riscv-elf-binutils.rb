@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfBinutils < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU Binutils for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.39.tar.xz"
-  sha256 "645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00"
+  url "https://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.xz"
+  sha256 "0f8a4c272d7f17f369ded10a4aca28b8e304828e95526da482b0ccc4dfc9d8e1"
 
   depends_on "gmp"
   depends_on "mpfr"
@@ -32,6 +32,7 @@ class RiscvElfBinutils < Formula
              "--with-isa-spec=20191213"
       system "make"
       system "make install"
+      system "rm #{prefix}/lib/bfd-plugins/libdep.a"
       system "(cd #{prefix}/share/info && \
                for info in *.info; do \
                   mv $info $(echo $info | sed 's/^/riscv64-unknown-elf-/'); done)"
