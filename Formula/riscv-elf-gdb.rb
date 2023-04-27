@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGdb < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU debugger for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/gdb/gdb-12.1.tar.xz"
-  sha256 "0e1793bf8f2b54d53f46dea84ccfd446f48f81b297b28c4f7fc017b818d69fed"
+  url "https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz"
+  sha256 "115ad5c18d69a6be2ab15882d365dda2a2211c14f480b3502c6eba576e2e95a0"
 
   depends_on "gmp"
   depends_on "libmpc"
@@ -14,7 +14,6 @@ class RiscvElfGdb < Formula
   depends_on "python"
   depends_on "texinfo" => :build
   depends_on "flex" => :build
-  depends_on "bison" => :build
   depends_on "bison" => :build
   depends_on "autoconf" => :build
   depends_on "automake" => :build
@@ -27,7 +26,6 @@ class RiscvElfGdb < Formula
       system "../configure",
              "--prefix=#{prefix}",
              "--target=riscv64-unknown-elf",
-             "--disable-shared",
              "--disable-nls",
              "--with-gmp=#{Formulary.factory("gmp").prefix}",
              "--with-mpfr=#{Formulary.factory("mpfr").prefix}",
