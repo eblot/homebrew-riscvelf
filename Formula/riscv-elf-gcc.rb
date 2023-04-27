@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGcc < Formula
   desc "GNU C/C++ compiler for baremetal RISC-V targets"
   homepage "https://gcc.gnu.org"
-  url "https://ftp.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.xz"
-  sha256 "e549cf9cf3594a00e27b6589d4322d70e0720cdd213f39beb4181e06926230ff"
+  url 'http://ftpmirror.gnu.org/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz'
+  sha256 '61d684f0aa5e76ac6585ad8898a2427aade8979ed5e7f85492286c4dfc13ee86'
 
   depends_on "riscv-elf-binutils"
   depends_on "gmp"
@@ -14,10 +14,11 @@ class RiscvElfGcc < Formula
   depends_on "mpfr"
   depends_on "python"
 
+  keg_only "conflict with other GCC installations"
+
   resource "newlib" do
-    url "https://github.com/bminor/newlib/archive/refs/tags/newlib-snapshot-20211231.tar.gz"
-    version "4.2-pre1"
-    sha256 "4e8edc6ccc5bfe3343661248a61e32f08d28f830fe9b2795f6f9d1c8e2054b96"
+    url "ftp://sourceware.org/pub/newlib/newlib-4.2.0.20211231.tar.gz"
+    sha256 "c3a0e8b63bc3bef1aeee4ca3906b53b3b86c8d139867607369cb2915ffc54435"
   end
 
   patch :DATA
@@ -85,9 +86,6 @@ class RiscvElfGcc < Formula
           "--with-isa-spec=20191213"
       system "make"
       system "make -j1 -k install"
-      system "(cd #{prefix}/share/info && \
-               for info in *.info; do \
-                  mv $info $(echo $info | sed 's/^/riscv64-unknown-elf-/'); done)"
 
       system "ln -s #{binutils.prefix}/riscv64-unknown-elf/bin #{prefix}/riscv64-unknown-elf/bin"
     end
