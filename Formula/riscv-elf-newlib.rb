@@ -3,9 +3,9 @@ require "formula"
 class RiscvElfNewlib < Formula
   desc "C libraries for baremetal RISC-V targets"
   homepage "https://sourceware.org/newlib/"
-  url "https://github.com/bminor/newlib/archive/refs/tags/newlib-snapshot-20211231.tar.gz"
-  version "4.2-pre1"
-  sha256 "4e8edc6ccc5bfe3343661248a61e32f08d28f830fe9b2795f6f9d1c8e2054b96"
+  url "ftp://sourceware.org/pub/newlib/newlib-4.2.0.20211231.tar.gz"
+  sha256 "c3a0e8b63bc3bef1aeee4ca3906b53b3b86c8d139867607369cb2915ffc54435"
+  version "4.2.0"
 
   option "with-debug", "Build libraries in debug mode"
 
