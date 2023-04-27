@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfLlvm < Formula
   homepage "https://llvm.org//"
   desc "Next-gen compiler for baremetal RISC-V targets"
-  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.1/llvm-project-15.0.1.src.tar.xz"
-  sha256 "f25ce2d4243bebf527284eb7be7f6f56ef454fca8b3de9523f7eb4efb8d26218"
+  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.2/llvm-project-16.0.2.src.tar.xz"
+  sha256 "6d8acae041ccd34abe144cda6eaa76210e1491f286574815b7261b3f2e58734c"
 
   # beware that forcing link may seriously break your installation, as
   # some header files may be symlinked in /usr/local/include and /usr/local/lib
