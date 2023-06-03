@@ -1,28 +1,29 @@
 class RiscvOpenocd < Formula
   desc "On-chip debugging, in-system programming for RISC-V"
   homepage "https://sourceforge.net/projects/openocd/"
-  url "https://github.com/openocd-org/openocd/archive/refs/tags/v0.12.0-rc3.tar.gz"
-  sha256 "dcf00672cbc72c17ab78596aa486a953766f05146b0ca4a1cfe8ae894bf75cc6"
-  version="0.12.0-rc3"
+  url "https://downloads.sourceforge.net/project/openocd/openocd/0.12.0/openocd-0.12.0.tar.bz2"
+  sha256 "af254788be98861f2bd9103fe6e60a774ec96a8c374744eef9197f6043075afa"
 
-  head do
-    url "https://github.com/openocd-org/openocd.git", :tag => "v0.12.0-rc3"
-    patch :DATA
-  end
-
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "texinfo" => :build
-
   depends_on "libftdi"
   depends_on "libusb"
+
+  patch :DATA
+
+  head do
+    url "https://github.com/openocd-org/openocd.git", branch: "master"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+    depends_on "texinfo" => :build
+  end
 
   keg_only "conflict with upstream openocd"
 
   def install
     args = %W[
+      --disable-dependency-tracking
       --prefix=#{prefix}
       --enable-verbose
       --enable-verbose-jtag-io
@@ -68,7 +69,7 @@ class RiscvOpenocd < Formula
       --disable-minidriver-dummy
     ]
 
-    system "./bootstrap"
+    system "./bootstrap", "nosubmodule" if build.head?
     system "./configure", *args
     system "make"
     system "make", "install"
