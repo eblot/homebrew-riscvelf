@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGdb < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU debugger for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz"
-  sha256 "115ad5c18d69a6be2ab15882d365dda2a2211c14f480b3502c6eba576e2e95a0"
+  url "https://sourceware.org/pub/gdb/releases/gdb-15.1.tar.xz"
+  sha256 "38254eacd4572134bca9c5a5aa4d4ca564cbbd30c369d881f733fb6b903354f2"
 
   depends_on "gmp"
   depends_on "libmpc"
