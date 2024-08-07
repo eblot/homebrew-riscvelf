@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfLlvm < Formula
   homepage "https://llvm.org//"
   desc "Next-gen compiler for baremetal RISC-V targets"
-  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.2/llvm-project-16.0.2.src.tar.xz"
-  sha256 "6d8acae041ccd34abe144cda6eaa76210e1491f286574815b7261b3f2e58734c"
+  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-project-18.1.8.src.tar.xz"
+  sha256 "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a"
 
   # beware that forcing link may seriously break your installation, as
   # some header files may be symlinked in /usr/local/include and /usr/local/lib
@@ -42,10 +42,6 @@ class RiscvElfLlvm < Formula
       system "cmake", "-G", "Ninja", "../llvm", *(std_cmake_args + args)
       system "ninja"
       system "ninja", "install"
-      # add man files that do not get automatically installed
-      system "mkdir -p #{man1} #{man7}"
-      system "cp ../lld/docs/ld.lld.1 ../llvm/docs/llvm-objdump.1 #{man1}"
-      system "cp ../llvm/docs/re_format.7 #{man7}"
     end
   end
 end

@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfCompilerRt < Formula
   desc "Compiler runtime for baremetal RISC-V targets"
   homepage "https://compiler-rt.llvm.org/"
-  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.1/llvm-project-15.0.1.src.tar.xz"
-  sha256 "f25ce2d4243bebf527284eb7be7f6f56ef454fca8b3de9523f7eb4efb8d26218"
+  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-project-18.1.8.src.tar.xz"
+  sha256 "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a"
 
   patch :DATA
 
