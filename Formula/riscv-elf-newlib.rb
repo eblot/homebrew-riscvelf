@@ -3,9 +3,9 @@ require "formula"
 class RiscvElfNewlib < Formula
   desc "C libraries for baremetal RISC-V targets"
   homepage "https://sourceware.org/newlib/"
-  url "ftp://sourceware.org/pub/newlib/newlib-4.2.0.20211231.tar.gz"
-  sha256 "c3a0e8b63bc3bef1aeee4ca3906b53b3b86c8d139867607369cb2915ffc54435"
-  version "4.2.0"
+  url "ftp://sourceware.org/pub/newlib/newlib-4.4.0.20231231.tar.gz"
+  sha256 "0c166a39e1bf0951dfafcd68949fe0e4b6d3658081d6282f39aeefc6310f2f13"
+  version "4.4.0"
 
   option "with-debug", "Build libraries in debug mode"
 
@@ -13,6 +13,7 @@ class RiscvElfNewlib < Formula
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "python" => :build
+  depends_on "texinfo" => :build
   depends_on "coreutils" => :build if OS.mac?
 
   # should not install as a system library
