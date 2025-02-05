@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfBinutils < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU Binutils for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.zst"
-  sha256 "ba5e600af2d0e823312b4e04d265722594be7d94906ebabe6eaf8d0817ef48ed"
+  url "https://ftp.gnu.org/gnu/binutils/binutils-2.44.tar.zst"
+  sha256 "79cb120b39a195ad588cd354aed886249bfab36c808e746b30208d15271cc95c"
 
   depends_on "gmp"
   depends_on "mpfr"
@@ -28,8 +28,7 @@ class RiscvElfBinutils < Formula
              "--disable-debug",
              "--disable-gdb",
              "--disable-gold",
-             "--disable-sim",
-             "--with-isa-spec=20191213"
+             "--disable-sim"
       system "make"
       system "make install"
       system "rm #{prefix}/lib/bfd-plugins/libdep.a"
