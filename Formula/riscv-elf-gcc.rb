@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGcc < Formula
   desc "GNU C/C++ compiler for baremetal RISC-V targets"
   homepage "https://gcc.gnu.org"
-  url 'http://ftpmirror.gnu.org/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz'
-  sha256 'a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9'
+  url 'http://ftpmirror.gnu.org/gcc/gcc-15.1.0/gcc-15.1.0.tar.xz'
+  sha256 'e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea'
 
   depends_on "riscv-elf-binutils"
   depends_on "gmp"
@@ -17,8 +17,8 @@ class RiscvElfGcc < Formula
   keg_only "conflict with other GCC installations"
 
   resource "newlib" do
-    url "ftp://sourceware.org/pub/newlib/newlib-4.4.0.20231231.tar.gz"
-    sha256 "0c166a39e1bf0951dfafcd68949fe0e4b6d3658081d6282f39aeefc6310f2f13"
+    url "ftp://sourceware.org/pub/newlib/newlib-4.5.0.20241231.tar.gz"
+    sha256 "33f12605e0054965996c25c1382b3e463b0af91799001f5bb8c0630f2ec8c852"
   end
 
   patch :DATA
