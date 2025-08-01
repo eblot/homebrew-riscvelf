@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfGdb < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU debugger for bare metal RISC-V targets"
-  url "https://sourceware.org/pub/gdb/releases/gdb-16.2.tar.xz"
-  sha256 "4002cb7f23f45c37c790536a13a720942ce4be0402d929c9085e92f10d480119"
+  url "https://sourceware.org/pub/gdb/releases/gdb-16.3.tar.xz"
+  sha256 "bcfcd095528a987917acf9fff3f1672181694926cc18d609c99d0042c00224c5"
 
   depends_on "gmp"
   depends_on "libmpc"
@@ -22,6 +22,9 @@ class RiscvElfGdb < Formula
   depends_on "guile" unless OS.mac?
 
   def install
+    # workaround for old zlib own workaround for MacOS
+    # zlib considers that fdopen does not exist on MacOS, which no longer stands true.
+    ENV.append "CFLAGS", "-Dfdopen=fdopen"
     mkdir "build" do
       system "../configure",
              "--prefix=#{prefix}",
