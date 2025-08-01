@@ -3,8 +3,8 @@ require "formula"
 class RiscvElfBinutils < Formula
   homepage "https://www.gnu.org/software/binutils/"
   desc "GNU Binutils for bare metal RISC-V targets"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.44.tar.zst"
-  sha256 "79cb120b39a195ad588cd354aed886249bfab36c808e746b30208d15271cc95c"
+  url "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.zst"
+  sha256 "7f288c9a869582d53dc645bf1b9e90cc5123f6862738850472ddbca69def47a3"
 
   depends_on "gmp"
   depends_on "mpfr"
@@ -13,6 +13,9 @@ class RiscvElfBinutils < Formula
   depends_on "bison" => :build
 
   def install
+    # workaround for old zlib own workaround for MacOS
+    # zlib considers that fdopen does not exist on MacOS, which no longer stands true.
+    ENV.append "CFLAGS", "-Dfdopen=fdopen"
     mkdir "build" do
       system "../configure",
              "--prefix=#{prefix}",
